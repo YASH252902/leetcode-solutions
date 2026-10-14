@@ -1,0 +1,30 @@
+class Solution {
+  public:
+  int solveUsingRec(int capacity , vector<int>& val , vector<int>& wt , int index, vector<vector<int>>& dp){
+      //base case
+      if(index >= wt.size()){
+          return 0 ;
+      }
+      if(dp[capacity][index] != -1){
+          return dp[capacity][index] ;
+      }
+      //include exclude prnciple we use
+      int includeAns = 0 ;
+      if(wt[index] <= capacity){
+      includeAns = val[index] + solveUsingRec(capacity - wt[index] , val, wt ,index+1 , dp) ;
+      }
+      int excludeAns = 0 + solveUsingRec(capacity , val , wt , index+1 , dp) ;
+      int finalAns = max(includeAns , excludeAns) ;
+      dp[capacity][index] = finalAns ;
+      return finalAns ;
+          
+      }
+    int knapsack(int capacity, vector<int> &val, vector<int> &wt) {
+        int n = wt.size() ;
+        int index = 0 ;
+        vector<vector<int>>dp(capacity + 1 , vector<int>(n+1 , -1));
+        int ans = solveUsingRec(capacity , val , wt , index , dp) ;
+        return ans ;
+        
+    }
+};
