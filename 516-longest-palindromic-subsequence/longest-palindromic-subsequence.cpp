@@ -30,25 +30,28 @@ public:
     }
     int solveTabulation(string s) {
           int n = s.length();
-        vector<vector<int>> dp(n + 1, vector<int>(n + 1, 0));
+          vector<int>curr(n , 0) ;
+          vector<int>next(n , 0) ;
+       // vector<vector<int>> dp(n + 1, vector<int>(n + 1, 0));
       
         for (int findex = n-1; findex >= 0; findex--) {
-            dp[findex][findex] = 1 ;
+            curr[findex] = 1 ;
             for (int lindex = findex+1; lindex < n; lindex++) {
                 int includeAns = 0;
                 int excludeAns = 0;
 
                 if (s[findex] == s[lindex]) {
-                    includeAns = 2 + dp[findex+1][lindex-1];
+                    includeAns = 2 + next[lindex-1];
                 } else {
-                    excludeAns = 0 + max(dp[findex+1][lindex], dp[findex][lindex-1]);
+                    excludeAns = 0 + max( next[lindex],  curr[lindex-1]);
                 }
 
                 int finalAns = max(includeAns, excludeAns);
-                dp[findex][lindex] = finalAns;
+                 curr[lindex] = finalAns;
             }
+         next = curr ;
         }
-        return dp[0][n-1] ;
+        return  next[n-1] ;
     }
 
     int longestPalindromeSubseq(string s) {
