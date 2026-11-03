@@ -4,21 +4,32 @@ public:
         int n = nums.size();
         int maxLength = 0;
         
-        // Check every possible starting point
+        // Since nums[i] <= 10^5, a fixed array acts as a perfect O(1) tracker.
+        // We use 100005 to safely cover the maximum possible value.
+        vector<int> seenVersion(100005, 0);
+        int version = 0;
+        
         for (int i = 0; i < n; i++) {
-            unordered_set<int> distinctEvens;
-            unordered_set<int> distinctOdds;
+            version++; // Increment version to "reset" tracking for the new window
+            int distinctEvens = 0;
+            int distinctOdds = 0;
             
-            // Expand the subarray ending at j
             for (int j = i; j < n; j++) {
-                if (nums[j] % 2 == 0) {
-                    distinctEvens.insert(nums[j]);
-                } else {
-                    distinctOdds.insert(nums[j]);
+                int val = nums[j];
+                
+                // If the value hasn't been seen in the CURRENT version (i.e., this specific outer loop)
+                if (seenVersion[val] != version) {
+                    seenVersion[val] = version;
+                    
+                    if (val % 2 == 0) {
+                        distinctEvens++;
+                    } else {
+                        distinctOdds++;
+                    }
                 }
                 
-                // If distinct counts match, update maxLength
-                if (distinctEvens.size() == distinctOdds.size()) {
+                // Update max length if distinct counts are perfectly balanced
+                if (distinctEvens == distinctOdds) {
                     maxLength = max(maxLength, j - i + 1);
                 }
             }
