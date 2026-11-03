@@ -1,18 +1,17 @@
 class Solution {
 public:
     int minMoves(vector<int>& nums) {
-        int start = 0; 
-        int end = nums.size() - 1;
-        int minMoves = 0;
+        int max_val = 0;
+        int sum = 0;
+        int n = nums.size();
         
-        // Corrected syntax to sort the array in descending order
-        sort(nums.begin(), nums.end(), greater<int>());
-        
-        while(start <= end){
-            minMoves += abs(nums[end] - nums[start]);
-           
-            end--;
+        // Find the maximum element and the sum of the array
+        for (int num : nums) {
+            max_val = max(max_val, num);
+            sum += num;
         }
-        return minMoves;
+        
+        // Calculate the difference between the target state and current state
+        return (max_val * n) - sum;
     }
 };
