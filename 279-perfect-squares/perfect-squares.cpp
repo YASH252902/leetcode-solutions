@@ -1,28 +1,30 @@
 class Solution {
 public:
-    int solveMemo(int index, int target, vector<int>& squares, vector<vector<int>>& dp) {
-        if (target == 0) {
-            return 0;
-        }
-        if (index >= squares.size()) {
-            return 1e9;
-        }
-        if (dp[index][target] != -1) {
-            return dp[index][target];
+    int solveUsingTabulation(int n, vector<int>& squares) {
+        int m = squares.size();
+        // Initialize with 1e9 (handles the index >= m base case automatically)
+        vector<vector<int>> dp(m + 1, vector<int>(n + 1, 1e9));
+
+        // Base case: target == 0 needs 0 squares
+        for (int index = 0; index <= m; index++) {
+            dp[index][0] = 0;
         }
 
-        // Include: stay at 'index' to allow reusing the same square
-        int includeAns = 1e9;
-        if (squares[index] <= target) {
-            includeAns = 1 + solveMemo(index, target - squares[index], squares, dp);
+        // Fill table bottom-up
+        for (int index = m - 1; index >= 0; index--) {
+            for (int target = 1; target <= n; target++) {
+                int includeAns = 1e9;
+                if (squares[index] <= target) {
+                    includeAns = 1 + dp[index][target - squares[index]];
+                }
+
+                int excludeAns = dp[index + 1][target];
+
+                dp[index][target] = min(includeAns, excludeAns);
+            }
         }
 
-        // Exclude: move to the next square
-        int excludeAns = solveMemo(index + 1, target, squares, dp);
-
-        int finalAns = min(includeAns, excludeAns);
-        dp[index][target] = finalAns;
-        return finalAns;
+        return dp[0][n];
     }
 
     int numSquares(int n) {
@@ -31,10 +33,6 @@ public:
             squares.push_back(i * i);
         }
 
-        int index = 0;
-        int target = n;
-        vector<vector<int>> dp(squares.size(), vector<int>(n + 1, -1));
-        int ans = solveMemo(index, target, squares, dp);
-        return ans;
+        return solveUsingTabulation(n, squares);
     }
 };
